@@ -1,13 +1,14 @@
 pipeline {
-    agent { label 'docker' }
+    agent none
 
     stages {
-        stage('Build Docker Image') {
+        stage('Test Agent') {
+            agent { label 'docker' }
             steps {
-                sh 'docker build -t app-ci-cd .'
+                sh 'echo NODE: $(hostname)'
+                sh 'whoami'
+                sh 'docker --version'
             }
         }
     }
 }
-
-
