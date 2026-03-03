@@ -1,14 +1,20 @@
-pipeline {
-    agent none
+stage('Build Image') {
+    steps {
+        script {
 
-    stages {
-        stage('Test Agent') {
-            agent { label 'docker' }
-            steps {
-                sh 'echo NODE: $(hostname)'
-                sh 'whoami'
-                sh 'docker --version'
-            }
+            def version = "${env.BUILD_NUMBER}"
+
+            sh """
+                echo ===== DEBUG =====
+                echo BUILD_NUMBER=${env.BUILD_NUMBER}
+                echo VERSION=${version}
+                echo =================
+
+                docker build -t app-ci-cd:${version} .
+                docker tag app-ci-cd:${version} app-ci-cd:latest
+
+                docker image ls | grep app-ci-cd
+            """
         }
     }
 }
