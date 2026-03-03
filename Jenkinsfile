@@ -1,20 +1,23 @@
-stage('Build Image') {
-    steps {
-        script {
+pipeline {
 
-            def version = "${env.BUILD_NUMBER}"
+    agent { label 'docker-agent' }
 
-            sh """
-                echo ===== DEBUG =====
-                echo BUILD_NUMBER=${env.BUILD_NUMBER}
-                echo VERSION=${version}
-                echo =================
+    stages {
 
-                docker build -t app-ci-cd:${version} .
-                docker tag app-ci-cd:${version} app-ci-cd:latest
+        stage('Build Image') {
+            steps {
+                script {
+                    def version = env.BUILD_NUMBER
 
-                docker image ls | grep app-ci-cd
-            """
+                    sh """
+                        echo BUILD_NUMBER=${version}
+                        docker build -t app-ci-cd:${version} .
+                        docker tag app-ci-cd:${version} app-ci-cd:latest
+                        docker image ls | grep app-ci-cd
+                    """
+                }
+            }
         }
+
     }
 }
